@@ -244,6 +244,11 @@ public class TimeSeriesDataStreamsIT extends ESRestTestCase {
                 );
             }
         }, 30, TimeUnit.SECONDS);
+        assertBusy(() -> {
+            assertThat(explainIndex(client(), backingIndexName).get("step"), is(PhaseCompleteStep.NAME));
+            Map<String, Object> settings = getOnlyIndexSettings(client(), backingIndexName);
+            assertNull(settings.get("index.frozen"));
+        }, 30, TimeUnit.SECONDS);
 
         Map<String, Object> settings = getOnlyIndexSettings(client(), backingIndexName);
         assertNull(settings.get("index.frozen"));
